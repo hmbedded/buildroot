@@ -2513,4 +2513,8 @@ menu "Text editors and viewers"
 	source "package/vim/Config.in"
 endmenu
 
+menu "Board support packages"
+	source "package/tegra210/Config.in"
+endmenu
+
 endmenu
