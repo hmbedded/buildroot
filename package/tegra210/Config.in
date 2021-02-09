@@ -8,3 +8,15 @@ config BR2_PACKAGE_TEGRA210
 	  booting process.
 
 	  https://developer.nvidia.com/embedded/linux-tegra
+
+if BR2_PACKAGE_TEGRA210
+
+config BR2_PACKAGE_TEGRA210_INITRD
+	bool "Install initrd"
+	default n
+	help
+	  Initrd is required for boot over nfs or from usb storage
+	  If you select n here then you also need to add the kernel
+	  config fragment xhci-tegra-module.config
+
+endif #BR2_PACKAGE_TEGRA210

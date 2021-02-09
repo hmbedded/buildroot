@@ -90,6 +90,10 @@ define TEGRA210_BUILD_CMDS
 	--chip 0x21 \
 	--bins "EBT cboot.bin; DTB tegra210-p3448-0000-p3449-0000-b00.dtb"
 
+	cd $(@D)/nv_tegra/l4t_deb_packages && \
+	ar x nvidia-l4t-xusb-firmware_32.5.0-20210115145440_arm64.deb data.tar.zst && \
+	tar -I zstd -xf data.tar.zst ./lib/firmware/tegra21x_xusb_firmware --strip-components 3
+
 endef
 
 define TEGRA210_INSTALL_IMAGES_CMDS
@@ -115,7 +119,6 @@ endef
 
 define TEGRA210_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/bootloader/extlinux.conf $(TARGET_DIR)/boot/extlinux/extlinux.conf
-	$(INSTALL) -D -m 0644 $(@D)/bootloader/l4t_initrd.img $(TARGET_DIR)/boot/initrd
 	$(INSTALL) -D -m 0644 $(@D)/bootloader/nv_boot_control.conf $(TARGET_DIR)/etc/nv_boot_control.conf
 
 	sed -i /TNSPEC/d $(TARGET_DIR)/etc/nv_boot_control.conf
@@ -130,5 +133,20 @@ define TEGRA210_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 -D $(@D)/bootloader/tegra210-p3448-0000-p3449-0000-b00.dtb \
 		$(TARGET_DIR)/boot/tegra210-p3448-0000-p3449-0000-b00.dtb
 endef
+
+define TEGRA210_INSTALL_INITRD
+	$(INSTALL) -D -m 0644 $(@D)/bootloader/l4t_initrd.img $(TARGET_DIR)/boot/initrd
+endef
+
+define TEGRA210_NO_INITRD
+	sed -i /INITRD/d $(TARGET_DIR)/boot/extlinux/extlinux.conf
+	$(INSTALL) -D -m 0644 $(@D)/nv_tegra/l4t_deb_packages/tegra21x_xusb_firmware $(TARGET_DIR)/lib/firmware
+endef
+
+ifeq ($(BR2_PACKAGE_TEGRA210_INITRD),y)
+TEGRA210_POST_INSTALL_TARGET_HOOKS += TEGRA210_INSTALL_INITRD
+else
+TEGRA210_POST_INSTALL_TARGET_HOOKS += TEGRA210_NO_INITRD
+endif
 
 $(eval $(generic-package))
