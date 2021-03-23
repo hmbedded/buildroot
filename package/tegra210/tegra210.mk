@@ -26,71 +26,20 @@ TEGRA210_REDISTRIBUTE = NO
 TEGRA210_INSTALL_IMAGES = YES
 TEGRA210_DEPENDENCIES = linux-nvidia linux uboot host-python
 
-# Collects files required for tegraflash.py
-# Also updates the flash.xml config file with values for the Jetson Nano SD (p3450-0000)
-define TEGRA210_CONFIGURE_CMDS
-	cp $(@D)/bootloader/t210ref/nvtboot.bin $(@D)/bootloader/nvtboot.bin
-	cp $(@D)/bootloader/t210ref/cboot.bin $(@D)/bootloader/cboot.bin
-	cp $(@D)/bootloader/t210ref/warmboot.bin $(@D)/bootloader/warmboot.bin
-	cp $(@D)/bootloader/t210ref/sc7entry-firmware.bin $(@D)/bootloader/sc7entry-firmware.bin
-	cp $(@D)/bootloader/t210ref/BCT/P3448_A00_lpddr4_204Mhz_P987.cfg \
-		$(@D)/bootloader/P3448_A00_lpddr4_204Mhz_P987.cfg
-	cp $(@D)/bootloader/t210ref/cfg/flash_l4t_t210_spi_sd_p3448.xml $(@D)/bootloader/flash.xml
-
-	sed -i -e 's/NXC/NVC/' \
-		-e 's/NVCTYPE/bootloader/' \
-		-e 's/NVCFILE/nvtboot.bin/' \
-		-e 's/VERFILE/qspi_bootblob_ver.txt/g' \
-		-e 's/EBTFILE/cboot.bin/' \
-		-e 's/TBCFILE/nvtboot_cpu.bin/' \
-		-e 's/TXC/TBC/' \
-		-e 's/TXS/TOS/' \
-		-e 's/TOSFILE/tos-mon-only.img/' \
-		-e 's/TBCTYPE/bootloader/' \
-		-e 's/DTBFILE/tegra210-p3448-0000-p3449-0000-b00.dtb/' \
-		-e 's/WB0TYPE/WB0/' \
-		-e 's/WB0FILE/warmboot.bin/' \
-		-e 's/BXF/BPF/' \
-		-e 's/BPFFILE/sc7entry-firmware.bin/' \
-		-e 's/WX0/WB0/' \
-		-e 's/DXB/DTB/' \
-		-e 's/EXS/EKS/' \
-		-e 's/EKSFILE/eks.img/' \
-		-e 's/FBTYPE/data/' \
-		-e 's/LNXFILE/boot.img/' \
-		-e 's/APPUUID//' \
-		-e 's/APPFILE/system.img/' \
-		-e '/FBFILE/d' \
-		-e '/BPFDTB-FILE/d' \
-		-e "s/APPSIZE/"$(BR2_TARGET_ROOTFS_EXT2_SIZE)"/" \
-		$(@D)/bootloader/flash.xml
-endef
-
-define COPY_DTB_FOR_SIGNING
-	cp $(BINARIES_DIR)/tegra210-p3448-0000-p3449-0000-b00.dtb \
-		$(@D)/bootloader/tegra210-p3448-0000-p3449-0000-b00.dtb
-endef
-
-TEGRA210_PRE_BUILD_HOOKS += COPY_DTB_FOR_SIGNING
-
 define TEGRA210_BUILD_CMDS
-	cd $(@D)/bootloader && \
-	./mkbootimg --kernel $(BINARIES_DIR)/u-boot.bin \
-	--ramdisk /dev/null \
-	--board mmcblk0p1 \
-	--output $(@D)/bootloader/boot.img \
-	--cmdline 'root=/dev/mmcblk0p1 rw rootwait rootfstype=ext4 console=ttyS0,115200n8 console=tty0 fbcon=map:0 net.ifnames=0'
-
-	cd $(@D)/bootloader && \
-	./tegraflash.py --bl cboot.bin \
-	--bct P3448_A00_lpddr4_204Mhz_P987.cfg \
-	--odmdata 0x94000 \
-	--bldtb tegra210-p3448-0000-p3449-0000-b00.dtb \
-	--applet nvtboot_recovery.bin \
-	--cmd "sign" \
-	--cfg flash.xml \
-	--chip 0x21 \
-	--bins "EBT cboot.bin; DTB tegra210-p3448-0000-p3449-0000-b00.dtb"
+	cd $(@D) && \
+	BOARDID=3448 BOARDSKU=0000 FAB=300 FUSELEVEL=fuselevel_production \
+	ROOTFS_DIR=$(TARGET_DIR) \
+	DTBFILE=$(BINARIES_DIR)/tegra210-p3448-0000-p3449-0000-b00.dtb \
+	KERNEL_IMAGE=$(BINARIES_DIR)/u-boot.bin \
+	./flash.sh \
+	--no-flash \
+	--no-root-check \
+	--no-systemimg \
+	-r \
+	--sign \
+	jetson-nano-devkit \
+	mmcblk0p1
 
 	cd $(@D)/nv_tegra/l4t_deb_packages && \
 	ar x nvidia-l4t-xusb-firmware_32.5.0-20210115145440_arm64.deb data.tar.zst && \
@@ -121,17 +70,6 @@ endef
 
 define TEGRA210_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/bootloader/extlinux.conf $(TARGET_DIR)/boot/extlinux/extlinux.conf
-	$(INSTALL) -D -m 0644 $(@D)/bootloader/nv_boot_control.conf $(TARGET_DIR)/etc/nv_boot_control.conf
-
-	sed -i /TNSPEC/d $(TARGET_DIR)/etc/nv_boot_control.conf
-	sed -i '$$ a TNSPEC 3448-300---1-0-jetson-nano-qspi-sd-mmcblk0p1' $(TARGET_DIR)/etc/nv_boot_control.conf
-	sed -i /TEGRA_CHIPID/d $(TARGET_DIR)/etc/nv_boot_control.conf
-	sed -i '$$ a TEGRA_CHIPID 0x21' $(TARGET_DIR)/etc/nv_boot_control.conf
-	sed -i /TEGRA_OTA_BOOT_DEVICE/d $(TARGET_DIR)/etc/nv_boot_control.conf
-	sed -i '$$ a TEGRA_OTA_BOOT_DEVICE /dev/mtdblock0' $(TARGET_DIR)/etc/nv_boot_control.conf
-	sed -i /TEGRA_OTA_GPT_DEVICE/d $(TARGET_DIR)/etc/nv_boot_control.conf
-	sed -i '$$ a TEGRA_OTA_GPT_DEVICE /dev/mtdblock0' $(TARGET_DIR)/etc/nv_boot_control.conf
-
 	$(INSTALL) -D -m 0644 -D $(@D)/bootloader/tegra210-p3448-0000-p3449-0000-b00.dtb \
 		$(TARGET_DIR)/boot/tegra210-p3448-0000-p3449-0000-b00.dtb
 endef

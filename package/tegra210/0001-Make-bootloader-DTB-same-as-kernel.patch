@@ -1,0 +1,27 @@
+From 9407cc6888a731d74ce4a9a4603dd0e77c10bd8e Mon Sep 17 00:00:00 2001
+From: Howard Mitchell <hm@hmbedded.co.uk>
+Date: Tue, 23 Mar 2021 15:30:28 +0000
+Subject: [PATCH] Make bootloader DTB same as kernel.
+
+Previously if a DTBFILE was used on the command line it would only
+be used for the kernel_* version.
+---
+ flash.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/flash.sh b/flash.sh
+index cb7ad11..10edcd8 100755
+--- a/flash.sh
++++ b/flash.sh
+@@ -1576,7 +1576,7 @@ mkfilesoft dev_params     "${TARGET_DIR}/BCT/${DEV_PARAMS}" "";
+ mkfilesoft bootrom_config "${TARGET_DIR}/BCT/${BOOTROM_CONFIG}" "";
+ mkfilesoft soft_fuses     "${TARGET_DIR}/BCT/${SOFT_FUSES}" "";
+ mkfilesoft tbcfile	"${TBCFILE}"	 "";
+-mkfilesoft tbcdtbfile	"${TBCDTB_FILE}" "${DTB_DIR}/${DTB_FILE}";
++mkfilesoft tbcdtbfile	"${DTBFILE}" "${DTB_DIR}/${DTB_FILE}";
+ mkfilesoft cbootoptionfile	"${CBOOTOPTION_FILE}"	"${TARGET_DIR}/cbo.dtb";
+ mkfilesoft varstorefile "${VARSTORE_FILE}" "";
+ if [ "${tegraid}" = "0x18" ] || [ "${tegraid}" = "0x19" ]; then
+-- 
+2.17.1
+
