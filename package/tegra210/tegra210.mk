@@ -28,9 +28,12 @@ TEGRA210_DEPENDENCIES = linux-nvidia linux uboot host-python
 
 define TEGRA210_BUILD_CMDS
 	cd $(@D) && \
-	BOARDID=3448 BOARDSKU=0000 FAB=300 FUSELEVEL=fuselevel_production \
+	BOARDID=$(BR2_PACKAGE_TEGRA210_BOARDID) \
+	BOARDSKU=$(BR2_PACKAGE_TEGRA210_BOARDSKU) \
+	FAB=$(BR2_PACKAGE_TEGRA210_FAB) \
+	FUSELEVEL=fuselevel_production \
 	ROOTFS_DIR=$(TARGET_DIR) \
-	DTBFILE=$(BINARIES_DIR)/tegra210-p3448-0000-p3449-0000-b00.dtb \
+	DTBFILE=$(BINARIES_DIR)/tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb \
 	KERNEL_IMAGE=$(BINARIES_DIR)/u-boot.bin \
 	./flash.sh \
 	--no-flash \
@@ -38,7 +41,7 @@ define TEGRA210_BUILD_CMDS
 	--no-systemimg \
 	-r \
 	--sign \
-	jetson-nano-devkit \
+	$(BR2_PACKAGE_TEGRA210_BOARD) \
 	mmcblk0p1
 
 	cd $(@D)/nv_tegra/l4t_deb_packages && \
@@ -62,16 +65,16 @@ define TEGRA210_INSTALL_IMAGES_CMDS
 	$(INSTALL) -m 0644 $(@D)/bootloader/signed/P3448_A00_lpddr4_204Mhz_P987.bct \
 		$(BINARIES_DIR)/P3448_A00_lpddr4_204Mhz_P987.bct
 	$(INSTALL) -m 0644 $(@D)/bootloader/signed/sc7entry-firmware.bin.encrypt $(BINARIES_DIR)/sc7entry-firmware.bin.encrypt
-	$(INSTALL) -m 0644 $(@D)/bootloader/signed/tegra210-p3448-0000-p3449-0000-b00.dtb.encrypt \
-		$(BINARIES_DIR)/tegra210-p3448-0000-p3449-0000-b00.dtb.encrypt
+	$(INSTALL) -m 0644 $(@D)/bootloader/signed/kernel_tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb.encrypt \
+		$(BINARIES_DIR)/kernel_tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb.encrypt
+	ln -sf $(BINARIES_DIR)/kernel_tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb.encrypt \
+		$(BINARIES_DIR)/kernel_tegra210.dtb.encrypt
 	$(INSTALL) -m 0644 $(@D)/bootloader/signed/tos-mon-only.img.encrypt $(BINARIES_DIR)/tos-mon-only.img.encrypt
 	$(INSTALL) -m 0644 $(@D)/bootloader/signed/warmboot.bin.encrypt $(BINARIES_DIR)/warmboot.bin.encrypt
 endef
 
 define TEGRA210_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/bootloader/extlinux.conf $(TARGET_DIR)/boot/extlinux/extlinux.conf
-	$(INSTALL) -D -m 0644 -D $(@D)/bootloader/tegra210-p3448-0000-p3449-0000-b00.dtb \
-		$(TARGET_DIR)/boot/tegra210-p3448-0000-p3449-0000-b00.dtb
 endef
 
 define TEGRA210_INSTALL_INITRD

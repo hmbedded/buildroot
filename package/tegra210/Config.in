@@ -11,6 +11,55 @@ config BR2_PACKAGE_TEGRA210
 
 if BR2_PACKAGE_TEGRA210
 
+choice
+	prompt "Build Target"
+	default BR2_PACKAGE_TEGRA210_DEVKIT_EMMC
+	help
+	  Select the Build Target for the b2 app.
+
+config BR2_PACKAGE_TEGRA210_DEVKIT_A02
+	bool "Build for Devkit A02"
+	help
+	  Select this to build for the version a02 devkit.
+
+config BR2_PACKAGE_TEGRA210_DEVKIT_B01
+	bool "Build for Devkit B01"
+	help
+	  Select this to build for the version B01 devkit.
+
+config BR2_PACKAGE_TEGRA210_DEVKIT_EMMC
+	bool "Build for Devkit Production"
+	help
+	  Select this to build for a production module in a version B01
+	  devkit carrier board.
+
+endchoice
+
+config BR2_PACKAGE_TEGRA210_BOARD
+	string
+	default "jetson-nano-devkit" if BR2_PACKAGE_TEGRA210_DEVKIT_A02 || BR2_PACKAGE_TEGRA210_DEVKIT_B01
+	default "jetson-nano-emmc" if BR2_PACKAGE_TEGRA210_DEVKIT_EMMC
+
+config BR2_PACKAGE_TEGRA210_BOARDID
+	string
+	default "3448"
+
+config BR2_PACKAGE_TEGRA210_BOARDSKU
+	string
+	default "0000" if BR2_PACKAGE_TEGRA210_DEVKIT_A02 || BR2_PACKAGE_TEGRA210_DEVKIT_B01
+	default "0002" if BR2_PACKAGE_TEGRA210_DEVKIT_EMMC
+
+config BR2_PACKAGE_TEGRA210_FAB
+	string
+	default "200" if BR2_PACKAGE_TEGRA210_DEVKIT_A02
+	default "300" if BR2_PACKAGE_TEGRA210_DEVKIT_B01
+	default "400" if BR2_PACKAGE_TEGRA210_DEVKIT_EMMC
+
+config BR2_PACKAGE_TEGRA210_DTBFAB
+	string
+	default "a02" if BR2_PACKAGE_TEGRA210_DEVKIT_A02
+	default "b00" if BR2_PACKAGE_TEGRA210_DEVKIT_B01 || BR2_PACKAGE_TEGRA210_DEVKIT_EMMC
+
 config BR2_PACKAGE_TEGRA210_INITRD
 	bool "Install initrd"
 	default n
