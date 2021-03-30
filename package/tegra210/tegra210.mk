@@ -50,14 +50,55 @@ define TEGRA210_BUILD_CMDS
 endef
 
 define TEGRA210_INSTALL_IMAGES_CMDS
-	$(INSTALL) -m 0644 $(@D)/bootloader/boot.img $(BINARIES_DIR)
-	$(INSTALL) -m 0644 $(@D)/bootloader/bmp.blob $(BINARIES_DIR)
-	$(INSTALL) -m 0644 $(@D)/bootloader/rp4.blob $(BINARIES_DIR)
-	$(INSTALL) -m 0644 $(@D)/bootloader/eks.img $(BINARIES_DIR)
-
-	$(INSTALL) -m 0644 $(@D)/bootloader/signed/* $(BINARIES_DIR)
-	ln -sf $(BINARIES_DIR)/kernel_tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb.encrypt \
-		$(BINARIES_DIR)/kernel_tegra210.dtb.encrypt
+	$(INSTALL) -d $(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/bmp.blob \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/boot.img.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/cboot.bin \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/cboot.bin.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/eks.img \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/emmc_bootblob_ver.txt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/flash.xml.bin \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/kernel_tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/kernel_tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0755 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/nvaflash.sh \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0755 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/nvmflash.sh \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/nvtboot.bin.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/nvtboot_cpu.bin.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/P3448_A00_lpddr4_204Mhz_P987.bct \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/rcm_0_encrypt.rcm \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/rcm_1_encrypt.rcm \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/rcm_list_signed.xml \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/rp4.blob \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/sc7entry-firmware.bin.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0755 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/tegrabct \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0755 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/tegrarcm \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0755 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/tegradevflash \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/tos-mon-only.img.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
+	$(INSTALL) -m 0644 $(@D)/bootloader/mfi_$(BR2_PACKAGE_TEGRA210_BOARD)/warmboot.bin.encrypt \
+		$(BINARIES_DIR)/mfi_jetson_nano
 endef
 
 define TEGRA210_INSTALL_TARGET_CMDS
