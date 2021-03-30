@@ -1,0 +1,27 @@
+From c7c96388c8169d9b80c1899f8ec667fae38dc2ac Mon Sep 17 00:00:00 2001
+From: Howard Mitchell <hm@hmbedded.co.uk>
+Date: Tue, 30 Mar 2021 16:46:27 +0100
+Subject: [PATCH 2/2] Stop nvmassflashgen.sh creating a tarball
+
+---
+ nvmassflashgen.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/nvmassflashgen.sh b/nvmassflashgen.sh
+index bb9677a..a63765c 100755
+--- a/nvmassflashgen.sh
++++ b/nvmassflashgen.sh
+@@ -1141,8 +1141,8 @@ cat << EOF
+ EOF
+ 
+ fill_mfidir ${tfvers} "${mfidir}";
+-mfitarball="${mfidir}.tbz2";
+-tar cvjf ../${mfitarball} ${mfidir};
++#mfitarball="${mfidir}.tbz2";
++#tar cvjf ../${mfitarball} ${mfidir};
+ popd > /dev/null 2>&1;
+ 
+ echo "\
+-- 
+2.17.1
+

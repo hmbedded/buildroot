@@ -1,7 +1,7 @@
 From 9407cc6888a731d74ce4a9a4603dd0e77c10bd8e Mon Sep 17 00:00:00 2001
 From: Howard Mitchell <hm@hmbedded.co.uk>
 Date: Tue, 23 Mar 2021 15:30:28 +0000
-Subject: [PATCH] Make bootloader DTB same as kernel.
+Subject: [PATCH 1/2] Make bootloader DTB same as kernel.
 
 Previously if a DTBFILE was used on the command line it would only
 be used for the kernel_* version.
