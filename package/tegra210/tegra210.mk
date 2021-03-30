@@ -33,15 +33,13 @@ define TEGRA210_BUILD_CMDS
 	BOARDSKU=$(BR2_PACKAGE_TEGRA210_BOARDSKU) \
 	FAB=$(BR2_PACKAGE_TEGRA210_FAB) \
 	FUSELEVEL=fuselevel_production \
-	ROOTFS_DIR=$(TARGET_DIR) \
-	DTBFILE=$(BINARIES_DIR)/tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb \
-	KERNEL_IMAGE=$(BINARIES_DIR)/u-boot.bin \
-	./flash.sh \
-	--no-flash \
+	./nvmassflashgen.sh \
+	-R $(TARGET_DIR) \
+	-d $(BINARIES_DIR)/tegra210-p3448-$(BR2_PACKAGE_TEGRA210_BOARDSKU)-p3449-0000-$(BR2_PACKAGE_TEGRA210_DTBFAB).dtb \
+	-K $(BINARIES_DIR)/u-boot.bin \
 	--no-root-check \
 	--no-systemimg \
 	-r \
-	--sign \
 	$(BR2_PACKAGE_TEGRA210_BOARD) \
 	mmcblk0p1
 
