@@ -32,12 +32,10 @@ move_app_partition()
 
 main()
 {
-    # Make full sdcard image - i.e. will boot on any Jetson Nano
-    genimage_cmd genimage_full
-    move_app_partition sdcard_full
-
-    # Make sdard image with just the APP partition - requires bootloaders in QSPI flash
-    genimage_cmd genimage_APP_only
+    # Make sdard image with just the APP partition
+    # Bootloaders must already be in QSPI flash (as per L4T 32.5 or later)
+    # Otherwise a full system flash via recovery mode is required
+    genimage_cmd genimage
 }
 
 # Pass an empty rootpath. genimage makes a full copy of the given rootpath to
