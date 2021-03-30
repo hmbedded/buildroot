@@ -32,7 +32,14 @@ move_app_partition()
 
 main()
 {
-    # Make sdard image with just the APP partition
+    # Move rootfs image to mfi_jetson_nano directory, link rootfs.ext4 to it
+    # and make a tarball of the mfi_jetson_nano directory
+    pushd ${BINARIES_DIR}
+    mv rootfs.ext2 mfi_jetson_nano/system.img
+    tar zcf mfi_jetson_nano.tar.gz mfi_jetson_nano
+    popd
+
+    # Make a sdard image with just the APP partition
     # Bootloaders must already be in QSPI flash (as per L4T 32.5 or later)
     # Otherwise a full system flash via recovery mode is required
     genimage_cmd genimage
